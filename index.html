@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de RH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --border: #e8e6e0;
+  --border-light: #f0ede8;
+  --text: #1a1916;
+  --muted: #8a8780;
+  --faint: #c8c5be;
+  --green: #2d6a4f;
+  --green-bg: #f0f7f3;
+  --green-border: #b7d9c8;
+  --amber: #92400e;
+  --amber-bg: #fef8f0;
+  --amber-border: #f5d0a0;
+  --red: #9b2335;
+  --red-bg: #fdf2f4;
+  --blue: #1e3a5f;
+  --blue-bg: #f0f4f9;
+  --purple: #3d2b6b;
+  --purple-bg: #f4f1fb;
+  --purple-border: #c9c0e8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Geist', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── PAGE ── */
+.page { max-width: 920px; margin: 0 auto; padding: 56px 32px 100px; }
+
+/* ── HEADER ── */
+.header { margin-bottom: 48px; }
+.header-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); margin-bottom: 14px; }
+.header-title { font-family: 'Instrument Serif', serif; font-size: clamp(32px, 5vw, 48px); font-weight: 400; line-height: 1.08; letter-spacing: -0.02em; color: var(--text); margin-bottom: 14px; }
+.header-title em { font-style: italic; color: var(--muted); }
+.header-sub { font-size: 14px; color: var(--muted); font-weight: 300; max-width: 480px; line-height: 1.75; }
+.header-meta { display: flex; gap: 28px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-light); flex-wrap: wrap; }
+.meta-pair { display: flex; flex-direction: column; gap: 3px; }
+.meta-key { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.meta-val { font-size: 13px; color: var(--text); font-weight: 500; }
+
+/* ── TABS ── */
+.tabs-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+  font-family: 'Geist', sans-serif;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--text); font-weight: 500; border-bottom-color: var(--text); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 56px; }
+.section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px; }
+.section-num { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: var(--faint); text-transform: uppercase; flex-shrink: 0; }
+.section-title { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; letter-spacing: -0.01em; }
+.section-rule { flex: 1; height: 1px; background: var(--border-light); }
+.section-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.75; margin-bottom: 24px; max-width: 560px; }
+
+/* ── JORNADA ── */
+.journey { display: flex; flex-direction: column; }
+.j-step { display: grid; grid-template-columns: 20px 1fr; gap: 0 24px; position: relative; }
+.j-step:not(:last-child) { padding-bottom: 36px; }
+.j-step:not(:last-child)::after { content: ''; position: absolute; left: 9px; top: 20px; bottom: 0; width: 1px; background: var(--border); }
+.j-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--bg); margin-top: 6px; position: relative; z-index: 1; flex-shrink: 0; }
+.j-step[data-s="done"] .j-dot { background: var(--green); border-color: var(--green); }
+.j-step[data-s="now"] .j-dot { background: var(--text); border-color: var(--text); box-shadow: 0 0 0 3px var(--border); }
+.j-status { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.j-step[data-s="done"] .j-status { color: var(--green); }
+.j-step[data-s="now"] .j-status { color: var(--text); }
+.j-step[data-s="next"] .j-status { color: var(--faint); }
+.j-name { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.j-step[data-s="next"] .j-name { color: var(--muted); }
+.j-desc { font-size: 13px; color: var(--muted); max-width: 520px; margin-bottom: 10px; font-weight: 300; }
+.j-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 11px; font-weight: 400; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); }
+.tag-done { border-color: var(--green-border); color: var(--green); background: var(--green-bg); }
+.tag-now { border-color: var(--faint); color: var(--text); background: var(--border-light); }
+.tag-ai { border-color: var(--purple-border); color: var(--purple); background: var(--purple-bg); }
+
+/* ── MÓDULOS ── */
+.mod-legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; font-size: 12px; color: var(--muted); }
+.mod-legend span { display: flex; align-items: center; gap: 6px; }
+.mod-legend-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+.mod-list { display: flex; flex-direction: column; gap: 8px; }
+.mod-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.mod-trigger {
+  width: 100%; text-align: left; background: none; border: none;
+  cursor: pointer; padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  transition: background 0.15s;
+  font-family: 'Geist', sans-serif;
+}
+.mod-trigger:hover { background: var(--bg); }
+.mod-status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-building { background: var(--blue); }
+.dot-pending  { background: var(--amber); }
+.dot-done     { background: var(--green); }
+.dot-auto     { background: var(--purple); }
+.dot-norule   { background: var(--faint); }
+.mod-trigger-name { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+.mod-trigger-badge {
+  font-size: 11px; padding: 2px 9px; border-radius: 20px;
+  border: 1px solid var(--border); color: var(--muted); white-space: nowrap; flex-shrink: 0;
+}
+.badge-building { border-color: #b8d4f0; color: var(--blue); background: var(--blue-bg); }
+.badge-pending  { border-color: var(--amber-border); color: var(--amber); background: var(--amber-bg); }
+.badge-norule   { border-color: var(--border); color: var(--faint); }
+.mod-arrow { font-size: 11px; color: var(--faint); transition: transform 0.2s; flex-shrink: 0; }
+.mod-card.open .mod-arrow { transform: rotate(180deg); }
+.mod-body {
+  display: none; padding: 0 20px 18px 41px;
+  border-top: 1px solid var(--border-light);
+  background: var(--surface);
+}
+.mod-card.open .mod-body { display: block; }
+.mod-body-note { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.7; padding-top: 14px; }
+.mod-rules-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin: 14px 0 10px; }
+.mod-rules { display: flex; flex-direction: column; gap: 8px; }
+.mod-rule {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 13px; color: var(--text); line-height: 1.5;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 7px;
+  border: 1px solid var(--border-light);
+}
+.rule-q { font-size: 12px; color: var(--faint); flex-shrink: 0; padding-top: 1px; }
+.rule-decide {
+  margin-top: 6px; font-size: 12px;
+  color: var(--faint); font-style: italic;
+  border-top: 1px solid var(--border-light);
+  padding-top: 6px;
+}
+
+/* ── JORNADA DO COLABORADOR (KPIs) ── */
+.journey-flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 32px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.flow-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.flow-stage-inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.flow-pill {
+  padding: 7px 16px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.flow-stage.active .flow-pill,
+.flow-pill:hover {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.flow-arrow {
+  width: 28px; height: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+  position: relative;
+}
+.flow-arrow::after {
+  content: '';
+  position: absolute;
+  right: -1px; top: -3px;
+  border: 3px solid transparent;
+  border-left: 5px solid var(--border);
+}
+
+.kpi-panels { }
+.kpi-panel { display: none; }
+.kpi-panel.active { display: block; }
+.kpi-panel-header { margin-bottom: 20px; }
+.kpi-panel-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px; font-weight: 400;
+  letter-spacing: -0.01em; margin-bottom: 6px;
+}
+.kpi-panel-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.7; }
+
+.kpi-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.kpi-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  background: var(--surface);
+}
+.kpi-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
+.kpi-card-name { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.35; }
+.kpi-card-status {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+}
+.ks-active   { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.ks-building { background: var(--blue-bg); color: var(--blue); border: 1px solid #b8d4f0; }
+.ks-discuss  { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.kpi-card-desc { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.6; }
+.kpi-divider { height: 1px; background: var(--border-light); margin: 10px 0; }
+.kpi-thresholds { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+.kpi-t { display: flex; flex-direction: column; gap: 3px; padding: 2px 0; }
+.kpi-t:not(:last-child) { padding-right: 10px; border-right: 1px solid var(--border-light); margin-right: 10px; }
+.kpi-t-label { font-size: 10px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; }
+.t-ok .kpi-t-label  { color: var(--green); }
+.t-am .kpi-t-label  { color: var(--amber); }
+.t-cr .kpi-t-label  { color: var(--red); }
+.kpi-t-val { font-size: 13px; font-weight: 500; color: var(--text); }
+.kpi-t-val.empty { font-size: 12px; font-weight: 300; color: var(--faint); font-style: italic; }
+
+/* KPIs transversais */
+.kpi-transversal { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.transversal-title { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin-bottom: 16px; }
+.kpi-trans-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+
+/* ── DEFINIÇÕES (ex-conversa) ── */
+.def-list { display: flex; flex-direction: column; gap: 10px; }
+.def-item { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.def-trigger {
+  width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; transition: background 0.15s; font-family: 'Geist', sans-serif;
+}
+.def-trigger:hover { background: var(--bg); }
+.def-left { display: flex; gap: 14px; align-items: flex-start; }
+.def-n { font-size: 11px; font-weight: 500; color: var(--faint); padding-top: 2px; flex-shrink: 0; width: 20px; }
+.def-q { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.def-chip { font-size: 11px; padding: 2px 9px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.def-arrow { font-size: 11px; color: var(--faint); transition: transform 0.2s; flex-shrink: 0; }
+.def-item.open .def-arrow { transform: rotate(180deg); }
+.def-body { display: none; padding: 0 20px 20px 54px; border-top: 1px solid var(--border-light); }
+.def-item.open .def-body { display: block; }
+.def-why { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.7; padding: 14px 0; border-bottom: 1px solid var(--border-light); margin-bottom: 14px; }
+.def-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.def-opt { display: flex; gap: 10px; font-size: 13px; color: var(--text); line-height: 1.5; }
+.def-opt-arr { font-size: 12px; color: var(--faint); padding-top: 1px; flex-shrink: 0; }
+.def-impact { font-size: 12px; color: var(--muted); font-style: italic; line-height: 1.6; padding-top: 10px; border-top: 1px solid var(--border-light); margin-bottom: 10px; }
+.def-decide { padding: 10px 14px; background: var(--bg); border-radius: 6px; font-size: 12px; color: var(--faint); font-style: italic; }
+
+/* ── DECISÕES CRÍTICAS ── */
+.dec-list { display: flex; flex-direction: column; gap: 10px; }
+.dec-card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.dec-header { padding: 16px 20px; border-bottom: 1px solid var(--border-light); display: flex; gap: 16px; align-items: flex-start; }
+.dec-n { font-size: 11px; font-weight: 500; color: var(--faint); padding-top: 2px; flex-shrink: 0; width: 20px; }
+.dec-title { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.dec-body { display: grid; grid-template-columns: 1fr 1fr; }
+.dec-block { padding: 14px 20px 14px 56px; }
+.dec-block:first-child { border-right: 1px solid var(--border-light); }
+.dec-block-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
+.dec-opts { display: flex; flex-direction: column; gap: 7px; }
+.dec-opt { display: flex; gap: 8px; font-size: 13px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+.dec-opt-l { font-size: 11px; font-weight: 500; color: var(--faint); flex-shrink: 0; width: 16px; padding-top: 1px; }
+.dec-impact { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.65; }
+.dec-decide { padding: 12px 20px 12px 56px; border-top: 1px solid var(--border-light); font-size: 12px; color: var(--faint); font-style: italic; background: var(--bg); }
+
+/* ── PRÓXIMOS PASSOS ── */
+.steps { display: flex; flex-direction: column; gap: 8px; }
+.step-row {
+  display: grid; grid-template-columns: 28px 1fr 80px 96px;
+  gap: 16px; align-items: center;
+  padding: 14px 16px; border: 1px solid var(--border);
+  border-radius: 10px; background: var(--surface); transition: border-color 0.15s;
+}
+.step-row:hover { border-color: var(--faint); }
+.step-row.done { opacity: 0.4; }
+.step-row.done .step-acao { text-decoration: line-through; }
+.step-n2 { font-size: 12px; font-weight: 500; color: var(--faint); text-align: right; }
+.step-row.done .step-n2 { color: var(--green); }
+.step-acao { font-size: 14px; font-weight: 400; color: var(--text); }
+.step-owner { font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 300; }
+.step-fase { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); text-align: center; white-space: nowrap; }
+.step-prazo { font-size: 12px; color: var(--faint); text-align: right; }
+
+@media (max-width: 680px) {
+  .page { padding: 32px 16px 80px; }
+  .dec-body { grid-template-columns: 1fr; }
+  .dec-block:first-child { border-right: none; border-bottom: 1px solid var(--border-light); }
+  .step-row { grid-template-columns: 28px 1fr; }
+  .step-fase, .step-prazo { display: none; }
+  .flow-pill { padding: 6px 12px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-label">Cultura &amp; Pessoas</div>
+    <h1 class="header-title">Portal de <em>RH</em></h1>
+    <p class="header-sub">Visão completa do projeto — onde estamos, o que falta definir e o caminho até a autonomia total.</p>
+    <div class="header-meta">
+      <div class="meta-pair">
+        <span class="meta-key">Última revisão</span>
+        <span class="meta-val">A preencher</span>
+      </div>
+      <div class="meta-pair">
+        <span class="meta-key">Fase atual</span>
+        <span class="meta-val">2 — Regras de negócio</span>
+      </div>
+      <div class="meta-pair">
+        <span class="meta-key">Próxima ação</span>
+        <span class="meta-val">Reunião com sócios</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABS NAV -->
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="showTab('t1', this)">01 Jornada</button>
+    <button class="tab-btn" onclick="showTab('t2', this)">02 Módulos</button>
+    <button class="tab-btn" onclick="showTab('t3', this)">03 Definições</button>
+    <button class="tab-btn" onclick="showTab('t4', this)">04 KPIs</button>
+    <button class="tab-btn" onclick="showTab('t5', this)">05 Decisões críticas</button>
+    <button class="tab-btn" onclick="showTab('t6', this)">06 Próximos passos</button>
+  </nav>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- ABA 01 — JORNADA DE MATURIDADE                 -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div id="t1" class="tab-panel active">
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Jornada de maturidade</h2>
+        <div class="section-rule"></div>
+      </div>
+      <div class="journey">
+
+        <div class="j-step" data-s="done">
+          <div class="j-dot"></div>
+          <div class="j-body">
+            <div class="j-status">Concluído</div>
+            <div class="j-name">Sistematização</div>
+            <div class="j-desc">Todos os processos centralizados — vagas, candidatos, colaboradores, reembolso, férias e offboarding num único sistema.</div>
+            <div class="j-tags">
+              <span class="tag tag-done">Gestão de vagas</span>
+              <span class="tag tag-done">Candidatos</span>
+              <span class="tag tag-done">Colaboradores</span>
+              <span class="tag tag-done">Reembolso</span>
+              <span class="tag tag-done">Férias</span>
+              <span class="tag tag-done">Offboarding</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-step" data-s="now">
+          <div class="j-dot"></div>
+          <div class="j-body">
+            <div class="j-status">Estamos aqui</div>
+            <div class="j-name">Regras de negócio + KPIs</div>
+            <div class="j-desc">Definir o que é normal, o que é alerta e o que é crítico — para cada módulo. Sem isso, o sistema não sabe quando agir.</div>
+            <div class="j-tags">
+              <span class="tag tag-now">Reunião com sócios</span>
+              <span class="tag tag-now">Thresholds de KPI</span>
+              <span class="tag tag-now">Matriz de aprovação</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-step" data-s="next">
+          <div class="j-dot"></div>
+          <div class="j-body">
+            <div class="j-status">Próximo</div>
+            <div class="j-name">Automações de processo</div>
+            <div class="j-desc">Fluxos rodando sem intervenção — onboarding, aprovações, lembretes, coleta de dados. Zero entrada manual.</div>
+            <div class="j-tags">
+              <span class="tag">Triggers automáticos</span>
+              <span class="tag">SLAs rastreados</span>
+              <span class="tag">Zero manual</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-step" data-s="next">
+          <div class="j-dot"></div>
+          <div class="j-body">
+            <div class="j-status">Futuro próximo</div>
+            <div class="j-name">Agentes de IA</div>
+            <div class="j-desc">Camada de inteligência sobre os dados. Os agentes monitoram, antecipam e recomendam. O humano só decide.</div>
+            <div class="j-tags">
+              <span class="tag tag-ai">Agente de turnover</span>
+              <span class="tag tag-ai">Agente de clima</span>
+              <span class="tag tag-ai">HR Copilot</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="j-step" data-s="next">
+          <div class="j-dot"></div>
+          <div class="j-body">
+            <div class="j-status">Visão</div>
+            <div class="j-name">RH estratégico — 100% automatizado no operacional</div>
+            <div class="j-desc">Sistema opera e aprende. O time de Cultura & Pessoas atua exclusivamente como parceiro estratégico.</div>
+            <div class="j-tags">
+              <span class="tag tag-ai">Decisão assistida por IA</span>
+              <span class="tag">Relatório automático</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- ABA 02 — MÓDULOS                               -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div id="t2" class="tab-panel">
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Módulos do sistema</h2>
+        <div class="section-rule"></div>
+      </div>
+      <p class="section-desc">Cada módulo tem seu estado atual e as regras de negócio que precisam ser definidas antes de automatizar. Clique para expandir.</p>
+
+      <div class="mod-legend">
+        <span><span class="mod-legend-dot" style="background:var(--blue)"></span>Em construção</span>
+        <span><span class="mod-legend-dot" style="background:var(--amber)"></span>Regras pendentes</span>
+        <span><span class="mod-legend-dot" style="background:var(--faint)"></span>Sem regras necessárias</span>
+        <span><span class="mod-legend-dot" style="background:var(--green)"></span>Regras definidas</span>
+        <span><span class="mod-legend-dot" style="background:var(--purple)"></span>Automatizado</span>
+      </div>
+
+      <div class="mod-list">
+
+        <!-- Painel Geral -->
+        <div class="mod-card" id="m1">
+          <button class="mod-trigger" onclick="toggleMod('m1')">
+            <div class="mod-status-dot dot-building"></div>
+            <span class="mod-trigger-name">Painel Geral</span>
+            <span class="mod-trigger-badge badge-building">Em construção</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <p class="mod-body-note">Central de alertas e tomadas de decisão do sistema. Será o ponto de entrada diário — aqui aparecerão os alertas gerados pelos agentes de IA, anomalias detectadas e ações pendentes de aprovação humana. Nenhuma regra de negócio precisa ser definida neste módulo: ele é reflexo das regras dos outros módulos.</p>
+          </div>
+        </div>
+
+        <!-- Dashboard Gerencial -->
+        <div class="mod-card" id="m2">
+          <button class="mod-trigger" onclick="toggleMod('m2')">
+            <div class="mod-status-dot dot-building"></div>
+            <span class="mod-trigger-name">Dashboard Gerencial</span>
+            <span class="mod-trigger-badge badge-building">Em construção</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <p class="mod-body-note">Visão consolidada de todos os KPIs do sistema. Este módulo é afetado por todas as regras de negócio — ele apenas exibe o que os outros módulos geram. Antes de construí-lo, é necessário definir quais KPIs serão acompanhados e quais são seus thresholds (ver aba KPIs).</p>
+          </div>
+        </div>
+
+        <!-- Gestão de Vagas -->
+        <div class="mod-card" id="m3">
+          <button class="mod-trigger" onclick="toggleMod('m3')">
+            <div class="mod-status-dot dot-pending"></div>
+            <span class="mod-trigger-name">Gestão de Vagas</span>
+            <span class="mod-trigger-badge badge-pending">Regras pendentes</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <div class="mod-rules-title">Regras de negócio a definir</div>
+            <div class="mod-rules">
+              <div class="mod-rule">
+                <span class="rule-q">01</span>
+                <div>
+                  <div>Quem pode abrir uma vaga?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">02</span>
+                <div>
+                  <div>Temos prazo máximo de preenchimento por tipo de vaga?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">03</span>
+                <div>
+                  <div>Quando uma vaga de backlog é encerrada automaticamente?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">04</span>
+                <div>
+                  <div>Como o sistema pode auxiliar na gestão das vagas always on?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gestão de Candidatos -->
+        <div class="mod-card" id="m4">
+          <button class="mod-trigger" onclick="toggleMod('m4')">
+            <div class="mod-status-dot dot-pending"></div>
+            <span class="mod-trigger-name">Gestão de Candidatos</span>
+            <span class="mod-trigger-badge badge-pending">Regras pendentes</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <div class="mod-rules-title">Regras de negócio a definir</div>
+            <div class="mod-rules">
+              <div class="mod-rule">
+                <span class="rule-q">01</span>
+                <div>
+                  <div>Existe um critério de reprovação automático por currículo?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">02</span>
+                <div>
+                  <div>Quantos dias após envio do fit vamos desconsiderar o candidato?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">03</span>
+                <div>
+                  <div>Quem avalia e quem aprova cada etapa do funil?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Indique um Amigo -->
+        <div class="mod-card" id="m5">
+          <button class="mod-trigger" onclick="toggleMod('m5')">
+            <div class="mod-status-dot dot-norule"></div>
+            <span class="mod-trigger-name">Indique um Amigo</span>
+            <span class="mod-trigger-badge badge-norule">Sem regras necessárias</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <p class="mod-body-note">Módulo de indicações internas. O fluxo é direto e não requer regras de negócio complexas — colaborador indica, sistema registra e acompanha o andamento da indicação no funil de R&S. Pode ser automatizado assim que o módulo de Gestão de Candidatos estiver com regras definidas.</p>
+          </div>
+        </div>
+
+        <!-- Gestão de Colaboradores -->
+        <div class="mod-card" id="m6">
+          <button class="mod-trigger" onclick="toggleMod('m6')">
+            <div class="mod-status-dot dot-pending"></div>
+            <span class="mod-trigger-name">Gestão de Colaboradores</span>
+            <span class="mod-trigger-badge badge-pending">Regras pendentes</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <div class="mod-rules-title">Regras de negócio a definir</div>
+            <div class="mod-rules">
+              <div class="mod-rule">
+                <span class="rule-q">01</span>
+                <div>
+                  <div>Checklist de onboarding por cargo — quais etapas são obrigatórias?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">02</span>
+                <div>
+                  <div>Período de experiência: quando e como ocorre a avaliação?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">03</span>
+                <div>
+                  <div>Critério de nível de senioridade — o que define cada nível?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">04</span>
+                <div>
+                  <div>Qual gatilho aciona a criação de um PDI?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gestão de Reembolso -->
+        <div class="mod-card" id="m7">
+          <button class="mod-trigger" onclick="toggleMod('m7')">
+            <div class="mod-status-dot dot-pending"></div>
+            <span class="mod-trigger-name">Gestão de Reembolso</span>
+            <span class="mod-trigger-badge badge-pending">Regras pendentes</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <div class="mod-rules-title">Regras de negócio a definir</div>
+            <div class="mod-rules">
+              <div class="mod-rule">
+                <span class="rule-q">01</span>
+                <div>
+                  <div>Limite de aprovação automática por valor (R$)</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">02</span>
+                <div>
+                  <div>Categorias elegíveis por cargo</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">03</span>
+                <div>
+                  <div>SLA de pagamento após aprovação</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">04</span>
+                <div>
+                  <div>Alçada por valor — gestor vs. sócio</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gestão de Férias -->
+        <div class="mod-card" id="m8">
+          <button class="mod-trigger" onclick="toggleMod('m8')">
+            <div class="mod-status-dot dot-pending"></div>
+            <span class="mod-trigger-name">Gestão de Férias</span>
+            <span class="mod-trigger-badge badge-pending">Regras pendentes</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <div class="mod-rules-title">Regras de negócio a definir</div>
+            <div class="mod-rules">
+              <div class="mod-rule">
+                <span class="rule-q">01</span>
+                <div>
+                  <div>Antecedência mínima para solicitar férias</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">02</span>
+                <div>
+                  <div>% máximo da equipe ausente ao mesmo tempo</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">03</span>
+                <div>
+                  <div>Aprovação automática quando dentro das regras?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">04</span>
+                <div>
+                  <div>Alerta de férias vencendo — com quantos dias de antecedência?</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Offboarding -->
+        <div class="mod-card" id="m9">
+          <button class="mod-trigger" onclick="toggleMod('m9')">
+            <div class="mod-status-dot dot-pending"></div>
+            <span class="mod-trigger-name">Offboarding</span>
+            <span class="mod-trigger-badge badge-pending">Regras pendentes</span>
+            <span class="mod-arrow">▾</span>
+          </button>
+          <div class="mod-body">
+            <div class="mod-rules-title">Regras de negócio a definir</div>
+            <div class="mod-rules">
+              <div class="mod-rule">
+                <span class="rule-q">01</span>
+                <div>
+                  <div>Checklist obrigatório de desligamento por tipo de saída</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">02</span>
+                <div>
+                  <div>SLA de revogação de acessos após desligamento (horas)</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">03</span>
+                <div>
+                  <div>Entrevista de saída — prazo, responsável e formato</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+              <div class="mod-rule">
+                <span class="rule-q">04</span>
+                <div>
+                  <div>Como classificar o motivo de saída (distrato voluntário vs. involuntário)</div>
+                  <div class="rule-decide">Decisão: a preencher</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- ABA 03 — DEFINIÇÕES                            -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div id="t3" class="tab-panel">
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Definições a serem tomadas</h2>
+        <div class="section-rule"></div>
+      </div>
+      <p class="section-desc">Perguntas para conduzir a conversa com os sócios. A sequência vai do estratégico ao operacional — não pule etapas.</p>
+
+      <div class="def-list">
+
+        <div class="def-item" id="d1">
+          <button class="def-trigger" onclick="toggleDef('d1')">
+            <div class="def-left">
+              <span class="def-n">01</span>
+              <span class="def-q">Qual é o maior problema do negócio que passa por pessoas hoje?</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+              <span class="def-chip">Abertura</span>
+              <span class="def-arrow">▾</span>
+            </div>
+          </button>
+          <div class="def-body">
+            <p class="def-why">Esta é a pergunta que destrava a conversa. Não comece pelos KPIs — comece pela dor. A resposta vai revelar se o foco é custo, crescimento, retenção ou outro vetor.</p>
+            <div class="def-opts">
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Se você pudesse resolver uma coisa em pessoas nos próximos 6 meses, o que seria?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que está custando caro demais e entregando pouco?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Qual decisão de pessoas você tomaria diferente se soubesse o que sabe hoje?"</span></div>
+            </div>
+            <p class="def-impact">Ouça sem propor solução. Anote as palavras exatas que os sócios usam — elas vão nomear os KPIs.</p>
+            <div class="def-decide">Resposta dos sócios: a preencher após a reunião</div>
+          </div>
+        </div>
+
+        <div class="def-item" id="d2">
+          <button class="def-trigger" onclick="toggleDef('d2')">
+            <div class="def-left">
+              <span class="def-n">02</span>
+              <span class="def-q">Qual é o objetivo do negócio nos próximos 12 meses e o que pessoas precisa entregar para isso acontecer?</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+              <span class="def-chip">Estratégia</span>
+              <span class="def-arrow">▾</span>
+            </div>
+          </button>
+          <div class="def-body">
+            <p class="def-why">KPIs sem objetivo de negócio são só números. Quando você sabe para onde a empresa vai, fica óbvio o que medir — e o que ignorar.</p>
+            <div class="def-opts">
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Vamos dobrar de tamanho? Manter e otimizar? Reestruturar?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Em 12 meses, como seria o time ideal para esse objetivo?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que RH precisa entregar para que esse objetivo seja possível?"</span></div>
+            </div>
+            <p class="def-impact">A resposta determina quais KPIs vão para a primeira linha do dashboard.</p>
+            <div class="def-decide">Resposta dos sócios: a preencher após a reunião</div>
+          </div>
+        </div>
+
+        <div class="def-item" id="d3">
+          <button class="def-trigger" onclick="toggleDef('d3')">
+            <div class="def-left">
+              <span class="def-n">03</span>
+              <span class="def-q">Como vocês definem "qualidade" em pessoas — o que seria um time de alto desempenho para vocês?</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+              <span class="def-chip">Critérios</span>
+              <span class="def-arrow">▾</span>
+            </div>
+          </button>
+          <div class="def-body">
+            <p class="def-why">Cada empresa tem uma definição diferente de "qualidade". Sem isso explicitado, o sistema vai medir o que acha que importa — não o que o negócio valoriza.</p>
+            <div class="def-opts">
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Me descreve 3 pessoas do time que você considera de alta performance — o que elas têm em comum?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Se um colaborador novo fosse avaliado em 90 dias, o que precisaria ter feito para ser uma ótima contratação?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que faz alguém ser considerado sênior aqui, independente do cargo?"</span></div>
+            </div>
+            <p class="def-impact">Essas respostas criam a régua de senioridade e os critérios de avaliação de performance.</p>
+            <div class="def-decide">Resposta dos sócios: a preencher após a reunião</div>
+          </div>
+        </div>
+
+        <div class="def-item" id="d4">
+          <button class="def-trigger" onclick="toggleDef('d4')">
+            <div class="def-left">
+              <span class="def-n">04</span>
+              <span class="def-q">Quais decisões de pessoas hoje dependem de vocês e deveriam ser delegadas ao sistema ou ao time?</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+              <span class="def-chip">Autonomia</span>
+              <span class="def-arrow">▾</span>
+            </div>
+          </button>
+          <div class="def-body">
+            <p class="def-why">Muitos gargalos em RH existem porque decisões simples ainda precisam de aprovação dos sócios. Mapear isso define onde o sistema pode ganhar velocidade imediatamente.</p>
+            <div class="def-opts">
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Quais aprovações de RH chegam pra vocês que poderiam ser automatizadas ou delegadas sem risco?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Onde vocês são consultados hoje mas preferiam ser apenas informados?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que o sistema precisaria ter para vocês confiarem numa decisão automática?"</span></div>
+            </div>
+            <p class="def-impact">Essa conversa define a matriz de autonomia — o coração das decisões críticas do sistema.</p>
+            <div class="def-decide">Resposta dos sócios: a preencher após a reunião</div>
+          </div>
+        </div>
+
+        <div class="def-item" id="d5">
+          <button class="def-trigger" onclick="toggleDef('d5')">
+            <div class="def-left">
+              <span class="def-n">05</span>
+              <span class="def-q">O que vocês querem saber sobre pessoas toda semana — e o que chega hoje que vocês ignoram?</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+              <span class="def-chip">Dashboard</span>
+              <span class="def-arrow">▾</span>
+            </div>
+          </button>
+          <div class="def-body">
+            <p class="def-why">Essa pergunta revela quais KPIs vão realmente ser usados — e quais vão virar número bonito que ninguém lê. O melhor dashboard é o mínimo que drive decisão.</p>
+            <div class="def-opts">
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Se você recebesse um relatório de RH toda segunda, quais 3 números você olharia primeiro?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que te faria agir imediatamente se soubesse?"</span></div>
+              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que você prefere não saber — e por quê?"</span></div>
+            </div>
+            <p class="def-impact">Os 3 números que os sócios citarem são os KPIs primários do sistema. Tudo o mais é secundário.</p>
+            <div class="def-decide">Resposta dos sócios: a preencher após a reunião</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- ABA 04 — KPIs                                  -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div id="t4" class="tab-panel">
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">04</span>
+        <h2 class="section-title">KPIs por etapa da jornada</h2>
+        <div class="section-rule"></div>
+      </div>
+      <p class="section-desc">Selecione uma etapa da jornada do colaborador para ver os KPIs que controlamos hoje.</p>
+
+      <!-- FLOW -->
+      <div class="journey-flow">
+        <div class="flow-stage active" onclick="showKpi('atração', this)">
+          <div class="flow-stage-inner">
+            <div class="flow-pill">Atração</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+        <div class="flow-stage" onclick="showKpi('rs', this)">
+          <div class="flow-stage-inner">
+            <div class="flow-pill">R&amp;S</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+        <div class="flow-stage" onclick="showKpi('onboarding', this)">
+          <div class="flow-stage-inner">
+            <div class="flow-pill">Onboarding</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+        <div class="flow-stage" onclick="showKpi('desenvolvimento', this)">
+          <div class="flow-stage-inner">
+            <div class="flow-pill">Desenvolvimento</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+        <div class="flow-stage" onclick="showKpi('carreira', this)">
+          <div class="flow-stage-inner">
+            <div class="flow-pill">Carreira &amp; Reconhecimento</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+        <div class="flow-stage" onclick="showKpi('despedida', this)">
+          <div class="flow-stage-inner">
+            <div class="flow-pill" style="border-right:none">Despedida</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANELS -->
+      <div class="kpi-panels">
+
+        <!-- Atração -->
+        <div class="kpi-panel active" id="kp-atração">
+          <div class="kpi-panel-header">
+            <div class="kpi-panel-title">Atração</div>
+            <div class="kpi-panel-desc">Como chegamos até os candidatos certos. Ainda sem KPIs formais mapeados — a definir com a equipe.</div>
+          </div>
+          <div style="padding:24px;border:1px solid var(--border);border-radius:10px;background:var(--surface);text-align:center;">
+            <div style="font-size:13px;color:var(--faint);font-style:italic;">KPIs desta etapa ainda não mapeados. Adicione após a reunião de definições.</div>
+          </div>
+        </div>
+
+        <!-- R&S -->
+        <div class="kpi-panel" id="kp-rs">
+          <div class="kpi-panel-header">
+            <div class="kpi-panel-title">Recrutamento &amp; Seleção</div>
+            <div class="kpi-panel-desc">Do momento em que a vaga abre até a contratação. Foco em velocidade, custo e qualidade da decisão.</div>
+          </div>
+          <div class="kpi-cards">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Tempo de preenchimento</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Dias entre abertura da vaga e aceite da proposta. Mede velocidade do processo.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Qualidade de contratação</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">% de contratações que permanecem após 90 dias. Proxy de qualidade da decisão de contratação.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Custo médio de contratação</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Inclui tempo de gestores, ferramentas e horas de RH por processo encerrado.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onboarding -->
+        <div class="kpi-panel" id="kp-onboarding">
+          <div class="kpi-panel-header">
+            <div class="kpi-panel-title">Onboarding</div>
+            <div class="kpi-panel-desc">Os primeiros 90 dias do colaborador. Determinam retenção de longo prazo e velocidade de adaptação.</div>
+          </div>
+          <div class="kpi-cards">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Pesquisa de Programa de Apadrinhamento</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Avaliação do colaborador sobre a experiência com o padrinho durante o onboarding.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Touchpoint 30 dias</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Check-in estruturado no primeiro mês — sinaliza dificuldades de adaptação precocemente.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Touchpoint 90 dias</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Avaliação ao fim do período de experiência — entrada do ciclo de performance.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desenvolvimento -->
+        <div class="kpi-panel" id="kp-desenvolvimento">
+          <div class="kpi-panel-header">
+            <div class="kpi-panel-title">Desenvolvimento</div>
+            <div class="kpi-panel-desc">Ciclo contínuo de crescimento após o onboarding. Envolve performance, plano individual e acompanhamento.</div>
+          </div>
+          <div class="kpi-cards">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Avaliação de desempenho</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Ciclo semestral de avaliação. Mede cobertura (% avaliados no prazo) e distribuição de notas.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">PDI — cobertura ativa</div>
+                <span class="kpi-card-status ks-building">Em construção</span>
+              </div>
+              <div class="kpi-card-desc">% de colaboradores com Plano de Desenvolvimento Individual ativo e em execução.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">1:1 — frequência e cobertura</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">% de colaboradores com 1:1 realizado na frequência acordada com o gestor.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carreira -->
+        <div class="kpi-panel" id="kp-carreira">
+          <div class="kpi-panel-header">
+            <div class="kpi-panel-title">Carreira &amp; Reconhecimento</div>
+            <div class="kpi-panel-desc">Evolução do colaborador dentro da empresa. Foco em progressão, senioridade e percepção de valor.</div>
+          </div>
+          <div class="kpi-cards">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Distribuição de senioridade</div>
+                <span class="kpi-card-status ks-discuss">A validar</span>
+              </div>
+              <div class="kpi-card-desc">Mapa de como o time está distribuído entre os níveis (júnior, pleno, sênior, liderança). Indica saúde da pirâmide de talentos — mais indicador de saúde do que KPI de performance.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Despedida -->
+        <div class="kpi-panel" id="kp-despedida">
+          <div class="kpi-panel-header">
+            <div class="kpi-panel-title">Despedida</div>
+            <div class="kpi-panel-desc">O que aprendemos com cada saída. Dados de offboarding são ouro para entender o que melhorar antes.</div>
+          </div>
+          <div class="kpi-cards">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Pesquisa de offboarding</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Score e temas recorrentes nas entrevistas de saída. Revela padrões que o sistema deve monitorar.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Distratos voluntários vs. involuntários</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Proporção entre saídas a pedido do colaborador e por decisão da empresa. Sinalizadores diferentes de problemas diferentes.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">Tempo médio de casa</div>
+                <span class="kpi-card-status ks-active">Ativo</span>
+              </div>
+              <div class="kpi-card-desc">Média de tenure dos colaboradores que saíram no período. Queda consistente indica problema estrutural.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- KPIs TRANSVERSAIS -->
+      <div class="kpi-transversal">
+        <div class="transversal-title">KPIs transversais — aparecem em toda a jornada</div>
+        <div class="kpi-trans-cards">
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <div class="kpi-card-name">eNPS mensal</div>
+              <span class="kpi-card-status ks-building">Em construção</span>
+            </div>
+            <div class="kpi-card-desc">Employee Net Promoter Score. Pulso mensal de engajamento e percepção do time sobre a empresa.</div>
+            <div class="kpi-divider"></div>
+            <div class="kpi-thresholds">
+              <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+              <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+              <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <div class="kpi-card-name">PDI — execução</div>
+              <span class="kpi-card-status ks-building">Em construção</span>
+            </div>
+            <div class="kpi-card-desc">Antes não era controlável. Novo KPI: % de metas do PDI concluídas no prazo por colaborador.</div>
+            <div class="kpi-divider"></div>
+            <div class="kpi-thresholds">
+              <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+              <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+              <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- ABA 05 — DECISÕES CRÍTICAS                     -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div id="t5" class="tab-panel">
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Decisões críticas do sistema</h2>
+        <div class="section-rule"></div>
+      </div>
+      <p class="section-desc">Estas decisões definem o nível de autonomia do sistema. Sem elas respondidas, o sistema não sabe quando agir sozinho e quando chamar um humano.</p>
+
+      <div class="dec-list">
+
+        <div class="dec-card">
+          <div class="dec-header"><span class="dec-n">01</span><span class="dec-title">O que o sistema pode fazer sozinho — sem nenhuma intervenção humana?</span></div>
+          <div class="dec-body">
+            <div class="dec-block">
+              <div class="dec-block-label">Opções</div>
+              <div class="dec-opts">
+                <div class="dec-opt"><span class="dec-opt-l">A</span><span>Apenas notifica — sempre espera aprovação humana</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">B</span><span>Age em transações de baixo risco (férias dentro das regras, reembolso abaixo do limite)</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">C</span><span>Age na maioria dos casos, escala apenas anomalias</span></div>
+              </div>
+            </div>
+            <div class="dec-block">
+              <div class="dec-block-label">Impacto no sistema</div>
+              <div class="dec-impact">A = mais controle, mais trabalho manual. C = mais autonomia, requer confiança no sistema. Define quantas interrupções o sistema gera por dia.</div>
+            </div>
+          </div>
+          <div class="dec-decide">Decisão dos sócios: a preencher</div>
+        </div>
+
+        <div class="dec-card">
+          <div class="dec-header"><span class="dec-n">02</span><span class="dec-title">Quando o sistema detecta algo crítico, como e para quem comunica?</span></div>
+          <div class="dec-body">
+            <div class="dec-block">
+              <div class="dec-block-label">Opções</div>
+              <div class="dec-opts">
+                <div class="dec-opt"><span class="dec-opt-l">A</span><span>E-mail para o RH, que decide o que fazer</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">B</span><span>Slack / WhatsApp direto para o gestor da área</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">C</span><span>Notificação no sistema + resumo semanal para sócios</span></div>
+              </div>
+            </div>
+            <div class="dec-block">
+              <div class="dec-block-label">Impacto no sistema</div>
+              <div class="dec-impact">Define velocidade de resposta e quem carrega a responsabilidade de agir. Alertas no Slack têm resposta mais rápida mas geram mais ruído.</div>
+            </div>
+          </div>
+          <div class="dec-decide">Decisão dos sócios: a preencher</div>
+        </div>
+
+        <div class="dec-card">
+          <div class="dec-header"><span class="dec-n">03</span><span class="dec-title">Com que frequência os sócios recebem o resumo executivo do sistema?</span></div>
+          <div class="dec-body">
+            <div class="dec-block">
+              <div class="dec-block-label">Opções</div>
+              <div class="dec-opts">
+                <div class="dec-opt"><span class="dec-opt-l">A</span><span>Semanal — toda segunda-feira</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">B</span><span>Quinzenal</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">C</span><span>Mensal — todo dia 1</span></div>
+              </div>
+            </div>
+            <div class="dec-block">
+              <div class="dec-block-label">Impacto no sistema</div>
+              <div class="dec-impact">Define o ritmo de governança. Semanal = mais visibilidade, mais tempo de leitura. Mensal = visão estratégica, menos operacional.</div>
+            </div>
+          </div>
+          <div class="dec-decide">Decisão dos sócios: a preencher</div>
+        </div>
+
+        <div class="dec-card">
+          <div class="dec-header"><span class="dec-n">04</span><span class="dec-title">Quem é considerado talento-chave para fins de rastreamento de retenção?</span></div>
+          <div class="dec-body">
+            <div class="dec-block">
+              <div class="dec-block-label">Opções</div>
+              <div class="dec-opts">
+                <div class="dec-opt"><span class="dec-opt-l">A</span><span>Top performers da última avaliação de performance</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">B</span><span>Colaboradores em liderança ou especialistas sênior</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">C</span><span>Critério híbrido: performance + criticidade do cargo</span></div>
+              </div>
+            </div>
+            <div class="dec-block">
+              <div class="dec-block-label">Impacto no sistema</div>
+              <div class="dec-impact">Sem esse critério, o agente de risco de turnover não consegue priorizar quem monitorar — e o KPI de retenção fica sem foco.</div>
+            </div>
+          </div>
+          <div class="dec-decide">Decisão dos sócios: a preencher</div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- ABA 06 — PRÓXIMOS PASSOS                       -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div id="t6" class="tab-panel">
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Próximos passos</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="steps">
+        <div class="step-row">
+          <div class="step-n2">01</div>
+          <div><div class="step-acao">Reunião com sócios — dor do negócio, KPIs e decisões críticas</div><div class="step-owner">RH + Sócios</div></div>
+          <span class="step-fase">Fase 2</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">02</div>
+          <div><div class="step-acao">Consolidar decisões da reunião neste painel</div><div class="step-owner">RH</div></div>
+          <span class="step-fase">Fase 2</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">03</div>
+          <div><div class="step-acao">Preencher thresholds dos KPIs na aba 04</div><div class="step-owner">RH + Sócios</div></div>
+          <span class="step-fase">Fase 2</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">04</div>
+          <div><div class="step-acao">Definir regras de negócio de cada módulo na aba 02</div><div class="step-owner">RH + Sócios</div></div>
+          <span class="step-fase">Fase 2</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">05</div>
+          <div><div class="step-acao">Construir automações de processo (Fase 3)</div><div class="step-owner">RH + Tech</div></div>
+          <span class="step-fase">Fase 3</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">06</div>
+          <div><div class="step-acao">Calibração dos primeiros alertas gerados pelo sistema</div><div class="step-owner">RH + Sócios</div></div>
+          <span class="step-fase">Fase 3</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">07</div>
+          <div><div class="step-acao">Kickoff dos agentes de IA — começando por risco de turnover</div><div class="step-owner">RH + Tech</div></div>
+          <span class="step-fase">Fase 4</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+        <div class="step-row">
+          <div class="step-n2">08</div>
+          <div><div class="step-acao">Primeiro relatório executivo gerado automaticamente</div><div class="step-owner">Sistema</div></div>
+          <span class="step-fase">Fase 4</span>
+          <div class="step-prazo">___/___/____</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</div>
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleMod(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+function toggleDef(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+function showKpi(stage, el) {
+  document.querySelectorAll('.kpi-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.flow-stage').forEach(s => s.classList.remove('active'));
+  document.getElementById('kp-' + stage).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
