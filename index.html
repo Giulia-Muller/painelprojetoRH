@@ -838,33 +838,10 @@ body {
           </div>
         </div>
 
-        <div class="def-item" id="d3">
-          <button class="def-trigger" onclick="toggleDef('d3')">
-            <div class="def-left">
-              <span class="def-n">03</span>
-              <span class="def-q">Como vocês definem "qualidade" em pessoas — o que seria um time de alto desempenho para vocês?</span>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
-              <span class="def-chip">Critérios</span>
-              <span class="def-arrow">▾</span>
-            </div>
-          </button>
-          <div class="def-body">
-            <p class="def-why">Cada empresa tem uma definição diferente de "qualidade". Sem isso explicitado, o sistema vai medir o que acha que importa — não o que o negócio valoriza.</p>
-            <div class="def-opts">
-              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Me descreve 3 pessoas do time que você considera de alta performance — o que elas têm em comum?"</span></div>
-              <div class="def-opt"><span class="def-opt-arr">→</span><span>"Se um colaborador novo fosse avaliado em 90 dias, o que precisaria ter feito para ser uma ótima contratação?"</span></div>
-              <div class="def-opt"><span class="def-opt-arr">→</span><span>"O que faz alguém ser considerado sênior aqui, independente do cargo?"</span></div>
-            </div>
-            <p class="def-impact">Essas respostas criam a régua de senioridade e os critérios de avaliação de performance.</p>
-            <div class="def-decide">Resposta dos sócios: a preencher após a reunião</div>
-          </div>
-        </div>
-
         <div class="def-item" id="d4">
           <button class="def-trigger" onclick="toggleDef('d4')">
             <div class="def-left">
-              <span class="def-n">04</span>
+              <span class="def-n">03</span>
               <span class="def-q">Quais decisões de pessoas hoje dependem de vocês e deveriam ser delegadas ao sistema ou ao time?</span>
             </div>
             <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
@@ -887,7 +864,7 @@ body {
         <div class="def-item" id="d5">
           <button class="def-trigger" onclick="toggleDef('d5')">
             <div class="def-left">
-              <span class="def-n">05</span>
+              <span class="def-n">04</span>
               <span class="def-q">O que vocês querem saber sobre pessoas toda semana — e o que chega hoje que vocês ignoram?</span>
             </div>
             <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
@@ -1120,6 +1097,32 @@ body {
                 <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
               </div>
             </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">eNPS mensal</div>
+                <span class="kpi-card-status ks-discuss">A validar</span>
+              </div>
+              <div class="kpi-card-desc">Employee Net Promoter Score. Pulso mensal de engajamento e percepção do time sobre a empresa.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <div class="kpi-card-name">PDI — execução</div>
+                <span class="kpi-card-status ks-discuss">A validar</span>
+              </div>
+              <div class="kpi-card-desc">Novo KPI, antes não era controlável. % de metas do PDI concluídas no prazo por colaborador.</div>
+              <div class="kpi-divider"></div>
+              <div class="kpi-thresholds">
+                <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
+                <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1197,39 +1200,6 @@ body {
 
       </div>
 
-      <!-- KPIs TRANSVERSAIS -->
-      <div class="kpi-transversal">
-        <div class="transversal-title">KPIs transversais — aparecem em toda a jornada</div>
-        <div class="kpi-trans-cards">
-          <div class="kpi-card">
-            <div class="kpi-card-top">
-              <div class="kpi-card-name">eNPS mensal</div>
-              <span class="kpi-card-status ks-building">Em construção</span>
-            </div>
-            <div class="kpi-card-desc">Employee Net Promoter Score. Pulso mensal de engajamento e percepção do time sobre a empresa.</div>
-            <div class="kpi-divider"></div>
-            <div class="kpi-thresholds">
-              <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
-              <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
-              <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-card-top">
-              <div class="kpi-card-name">PDI — execução</div>
-              <span class="kpi-card-status ks-building">Em construção</span>
-            </div>
-            <div class="kpi-card-desc">Antes não era controlável. Novo KPI: % de metas do PDI concluídas no prazo por colaborador.</div>
-            <div class="kpi-divider"></div>
-            <div class="kpi-thresholds">
-              <div class="kpi-t t-ok"><div class="kpi-t-label">Meta</div><div class="kpi-t-val empty">A definir</div></div>
-              <div class="kpi-t t-am"><div class="kpi-t-label">Alerta</div><div class="kpi-t-val empty">A definir</div></div>
-              <div class="kpi-t t-cr"><div class="kpi-t-label">Crítico</div><div class="kpi-t-val empty">A definir</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </section>
   </div>
 
@@ -1305,19 +1275,19 @@ body {
         </div>
 
         <div class="dec-card">
-          <div class="dec-header"><span class="dec-n">04</span><span class="dec-title">Quem é considerado talento-chave para fins de rastreamento de retenção?</span></div>
+          <div class="dec-header"><span class="dec-n">04</span><span class="dec-title">Qual é o orçamento aprovado para construção e manutenção do sistema?</span></div>
           <div class="dec-body">
             <div class="dec-block">
               <div class="dec-block-label">Opções</div>
               <div class="dec-opts">
-                <div class="dec-opt"><span class="dec-opt-l">A</span><span>Top performers da última avaliação de performance</span></div>
-                <div class="dec-opt"><span class="dec-opt-l">B</span><span>Colaboradores em liderança ou especialistas sênior</span></div>
-                <div class="dec-opt"><span class="dec-opt-l">C</span><span>Critério híbrido: performance + criticidade do cargo</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">A</span><span>Orçamento fixo por fase — aprovação a cada entrega</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">B</span><span>Orçamento anual definido com revisão semestral</span></div>
+                <div class="dec-opt"><span class="dec-opt-l">C</span><span>Orçamento por módulo — cada automação tem seu próprio budget</span></div>
               </div>
             </div>
             <div class="dec-block">
               <div class="dec-block-label">Impacto no sistema</div>
-              <div class="dec-impact">Sem esse critério, o agente de risco de turnover não consegue priorizar quem monitorar — e o KPI de retenção fica sem foco.</div>
+              <div class="dec-impact">Define o ritmo de construção e o escopo possível em cada fase. Sem orçamento definido, o roadmap fica sem prioridade real — e decisões de build vs. comprar ficam travadas.</div>
             </div>
           </div>
           <div class="dec-decide">Decisão dos sócios: a preencher</div>
